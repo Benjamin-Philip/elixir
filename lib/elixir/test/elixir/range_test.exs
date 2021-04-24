@@ -5,8 +5,12 @@ defmodule RangeTest do
 
   doctest Range
 
-  defp reverse(first..last) do
-    last..first
+  defp reverse(first..last//step) do
+    if step >= 0 do
+      last..first//-step
+    else
+      last..first
+    end
   end
 
   defp assert_disjoint(r1, r2) do
@@ -30,7 +34,7 @@ defmodule RangeTest do
 
   test "new" do
     assert Range.new(1, 3) == 1..3//1
-    assert Range.new(3, 1) == 3..1//-1
+    assert Range.new(3, 1) == 3..1//1
     assert Range.new(1, 3, 2) == 1..3//2
     assert Range.new(3, 1, -2) == 3..1//-2
   end
@@ -39,13 +43,14 @@ defmodule RangeTest do
     assert (1..3).first == 1
     assert (1..3).last == 3
     assert (1..3).step == 1
-    assert (3..1).step == -1
+    assert (3..1).step == 1
     assert (1..3//2).step == 2
   end
 
   test "inspect" do
     assert inspect(1..3) == "1..3"
-    assert inspect(3..1) == "3..1//-1"
+    assert inspect(3..1) == "3..1"
+    assert inspect(3..1//-1) == "3..1//-1"
   end
 
   test "limits are integer only" do

@@ -29,11 +29,7 @@ defmodule Range do
       iex> Enum.to_list(0..10//-1)
       []
 
-  When defining a range without a step, the step will be
-  defined based on the first and last position of the
-  range, If `first >= last`, it will be an increasing range
-  with a step of 1. Otherwise, it is a decreasing range.
-  Note however implicitly decreasing ranges are deprecated.
+  When defining a range without a step, the step will default to 1.
   Therefore, if you need a decreasing range from `3` to `1`,
   prefer to write `3..1//-1` instead.
 
@@ -107,9 +103,8 @@ defmodule Range do
   `first` to `last`. If `first` is equal to `last`, the range will contain
   one element, which is the number itself.
 
-  If `first` is greater than `last`, the range will be decreasing from `first`
-  to `last`, albeit this behaviour is deprecated. Therefore, it is advised to
-  explicitly list the step with `new/3`.
+  If `first` is greater than `last`, the range will contain no
+  elements. Therefore, it is advised to explicitly list the step with `new/3`.
 
   ## Examples
 
@@ -120,9 +115,7 @@ defmodule Range do
 
   @spec new(limit, limit) :: t
   def new(first, last) when is_integer(first) and is_integer(last) do
-    # TODO: Deprecate inferring a range with a step of -1 on Elixir v1.17
-    step = if first <= last, do: 1, else: -1
-    %Range{first: first, last: last, step: step}
+    %Range{first: first, last: last, step: 1}
   end
 
   def new(first, last) do
@@ -168,15 +161,14 @@ defmodule Range do
       0
 
       iex> Range.size(10..1)
-      10
+      0
       iex> Range.size(10..1//-1)
       10
       iex> Range.size(10..1//-2)
       5
       iex> Range.size(10..1//-3)
       4
-      iex> Range.size(10..1//1)
-      0
+
 
   """
   @doc since: "1.12.0"
